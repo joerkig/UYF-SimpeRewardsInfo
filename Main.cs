@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using MelonLoader;
 using SG.Claymore.Interaction;//Where the Name and Description hide
@@ -9,16 +10,17 @@ namespace SimpleRewards
     {
         public override void OnLateUpdate()
         {
-            GameObject left = GameObject.Find("RewardSpawner/SpawnPoints/Left");//finding the switch
-            if (left != null)//prevents the code from crashing the game while referencing a null object
+            string pattern = "(<script(\\s|\\S)*?<\\/script>)|(<style(\\s|\\S)*?<\\/style>)|(<!--(\\s|\\S)*?-->)|(<\\/?(\\s|\\S)*?>)";
+            GameObject left = GameObject.Find("RewardSpawner/SpawnPoints/Left");
+            if (left != null)
             {
-                RewardInteractable rewardInteractable = left.GetComponentInChildren<RewardInteractable>();//still finding the switch
+                RewardInteractable rewardInteractable = left.GetComponentInChildren<RewardInteractable>();
                 if (rewardInteractable != null)
                 {
                     if (rewardInteractable.DisplayName.ToString() != File.ReadAllText(MelonLoaderBase.UserDataPath + "\\DisplayNameLeft.txt"))
                     {
                         File.WriteAllText(MelonLoaderBase.UserDataPath + "\\DisplayNameLeft.txt", rewardInteractable.DisplayName.ToString());
-                        File.WriteAllText(MelonLoaderBase.UserDataPath + "\\DisplayDescriptionLeft.txt", rewardInteractable.DisplayDescription.ToString());
+                        File.WriteAllText(MelonLoaderBase.UserDataPath + "\\DisplayDescriptionLeft.txt", Regex.Replace(rewardInteractable.DisplayDescription.ToString(), pattern, ""));
                         //MelonLogger.Log(rewardInteractable.DisplayName.ToString());
                         //MelonLogger.Log(rewardInteractable.DisplayDescription.ToString());
                     }
@@ -32,16 +34,16 @@ namespace SimpleRewards
                     }
                 }
             }
-            GameObject center = GameObject.Find("RewardSpawner/SpawnPoints/Center");//finding the switch
-            if (center != null)//prevents the code from crashing the game while referencing a null object
+            GameObject center = GameObject.Find("RewardSpawner/SpawnPoints/Center");
+            if (center != null)
             {
-                RewardInteractable rewardInteractable = center.GetComponentInChildren<RewardInteractable>();//still finding the switch
+                RewardInteractable rewardInteractable = center.GetComponentInChildren<RewardInteractable>();
                 if (rewardInteractable != null)
                 {
                     if (rewardInteractable.DisplayName.ToString() != File.ReadAllText(MelonLoaderBase.UserDataPath + "\\DisplayNameCenter.txt"))
                     {
                         File.WriteAllText(MelonLoaderBase.UserDataPath + "\\DisplayNameCenter.txt", rewardInteractable.DisplayName.ToString());
-                        File.WriteAllText(MelonLoaderBase.UserDataPath + "\\DisplayDescriptionCenter.txt", rewardInteractable.DisplayDescription.ToString());
+                        File.WriteAllText(MelonLoaderBase.UserDataPath + "\\DisplayDescriptionCenter.txt", Regex.Replace(rewardInteractable.DisplayDescription.ToString(), pattern, ""));
                         //MelonLogger.Log(rewardInteractable.DisplayName.ToString());
                         //MelonLogger.Log(rewardInteractable.DisplayDescription.ToString());
                     }
@@ -55,16 +57,16 @@ namespace SimpleRewards
                     }
                 }
             }
-            GameObject right = GameObject.Find("RewardSpawner/SpawnPoints/Right");//finding the switch
+            GameObject right = GameObject.Find("RewardSpawner/SpawnPoints/Right");
             if (right != null)//prevents the code from crashing the game while referencing a null object
             {
-                RewardInteractable rewardInteractable = right.GetComponentInChildren<RewardInteractable>();//still finding the switch
+                RewardInteractable rewardInteractable = right.GetComponentInChildren<RewardInteractable>();
                 if (rewardInteractable != null)
                 {
                     if (rewardInteractable.DisplayName.ToString() != File.ReadAllText(MelonLoaderBase.UserDataPath + "\\DisplayNameRight.txt"))
                     {
                         File.WriteAllText(MelonLoaderBase.UserDataPath + "\\DisplayNameRight.txt", rewardInteractable.DisplayName.ToString());
-                        File.WriteAllText(MelonLoaderBase.UserDataPath + "\\DisplayDescriptionRight.txt", rewardInteractable.DisplayDescription.ToString());
+                        File.WriteAllText(MelonLoaderBase.UserDataPath + "\\DisplayDescriptionRight.txt", Regex.Replace(rewardInteractable.DisplayDescription.ToString(), pattern, ""));
                         //MelonLogger.Log(rewardInteractable.DisplayName.ToString());
                         //MelonLogger.Log(rewardInteractable.DisplayDescription.ToString());
                     }
