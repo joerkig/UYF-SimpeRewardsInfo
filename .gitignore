@@ -45,3 +45,8 @@ Properties/AssemblyInfo.cs
 obj/Release/SimpleRewards.pdb
 bin/Release/SimpleRewards.pdb
 *.pdb
+*.pdb
+bin/Release/SimpleRewards.pdb
+*.pdb
+*.CopyComplete
+*.pdb
