@@ -2,18 +2,18 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using MelonLoader;
-using SimpleRewards;
+using SimpleInfo;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: MelonInfo(typeof(MyMod), "Simple Reward Info", "1.0.0", "joerkig")]
+[assembly: MelonInfo(typeof(MyMod), "UYF Simple Info", "1.0.0", "joerkig")]
 [assembly: MelonGame("Schell Games", "UntilYouFall")]
-[assembly: AssemblyTitle("SimpleRewards")]
+[assembly: AssemblyTitle("SimpleInfo")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SimpleRewards")]
+[assembly: AssemblyProduct("SimpleInfo")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

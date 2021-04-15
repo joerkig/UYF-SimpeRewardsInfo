@@ -31,3 +31,17 @@ bin/Debug/SimpeRewards.pdb
 .vs/SimpleRewards/v15/.suo
 SimpleRewards.sln
 SimpleRewards.csproj.user
+.vs/SimpleInfo/v15/.suo
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal
+*.pdb
+*.pdb
+*.cache
+obj/Debug/SimpleInfo.csproj.FileListAbsolute.txt
+*.resources
+Properties/AssemblyInfo.cs
+obj/Release/SimpleRewards.pdb
+bin/Release/SimpleRewards.pdb
+*.pdb

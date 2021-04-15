@@ -1,22 +1,35 @@
-﻿using System.IO;
+﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using MelonLoader;
 using SG.Claymore.Interaction;//Where the Name and Description hide
+using SG.Claymore.Entities;//Health hides here
 
-namespace SimpleRewards
+namespace SimpleInfo
 {
     public class MyMod : MelonMod
     {
-        static void Blank(string position)
+        static string modFolder = MelonUtils.UserDataDirectory + "\\SimpleInfo\\";
+        string reloadScript = "<script>function timedRefresh(timeoutPeriod) {setTimeout(\"location.reload(true); \",timeoutPeriod);} window.onload = timedRefresh(2000);</script>";
+        static void Blank(string file)
         {
-            if (File.ReadAllText(MelonUtils.UserDataDirectory + "\\DisplayName" + position + ".txt") != null)
+            if (File.ReadAllText(modFolder + file) != null)//If not empty, empty it
             {
-                File.WriteAllText(MelonUtils.UserDataDirectory + "\\DisplayName" + position + ".txt", null);
-                File.WriteAllText(MelonUtils.UserDataDirectory + "\\DisplayDescription" + position + ".txt", null);
+                File.WriteAllText(modFolder + file, null);
             }
         }
-        static void WriteInfo(string position)
+        static void CreateIfMissing(string file)
+        {
+            if (File.Exists(modFolder + file) == false)//If missing create text based file
+            {
+                File.CreateText(modFolder + file);
+            }
+        }
+        static void WriteReward(string position)//Write Reward info to their txt files 
         {
             string pattern = "(<script(\\s|\\S)*?<\\/script>)|(<style(\\s|\\S)*?<\\/style>)|(<!--(\\s|\\S)*?-->)|(<\\/?(\\s|\\S)*?>)";
             GameObject gameObject = GameObject.Find("RewardSpawner/SpawnPoints/" + position);
@@ -25,31 +38,90 @@ namespace SimpleRewards
                 RewardInteractable rewardInteractable = gameObject.GetComponentInChildren<RewardInteractable>();
                 if (rewardInteractable != null)
                 {
-                    if (rewardInteractable.DisplayName.ToString() != File.ReadAllText(MelonUtils.UserDataDirectory + "\\DisplayName" + position + ".txt"))
+                    if (rewardInteractable.DisplayName.ToString() != File.ReadAllText(modFolder + "DisplayName" + position + ".txt"))
                     {
-                        File.WriteAllText(MelonUtils.UserDataDirectory + "\\DisplayName" + position + ".txt", rewardInteractable.DisplayName.ToString());
-                        File.WriteAllText(MelonUtils.UserDataDirectory + "\\DisplayDescription" + position + ".txt", Regex.Replace(rewardInteractable.DisplayDescription.ToString(), pattern, ""));
+                        File.WriteAllText(modFolder + "DisplayName" + position + ".txt", rewardInteractable.DisplayName.ToString());
+                        File.WriteAllText(modFolder + "DisplayDescription" + position + ".txt", Regex.Replace(rewardInteractable.DisplayDescription.ToString(), pattern, ""));
                     }
                 }
             }
         }
         public override void OnLateUpdate()
         {
-            WriteInfo("Left");
-            WriteInfo("Center");
-            WriteInfo("Right");
+            GameObject playerInteractor = GameObject.Find("Player/PlayerInteractor");
+            if (playerInteractor != null)
+            {
+                PlayerHealth playerHealth = playerInteractor.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    string healthPip = "<img src=\"HealthPip.png\">";
+                    string healthPipCracked = "<img src=\"HealthPipCracked.png\">";
+                    int currentHealth = (int)Math.Ceiling(playerHealth.CurrentHealth);
+                    int maxHealth = (int)Math.Ceiling(playerHealth.MaxHealth);
+                    int emptyHealth = maxHealth - currentHealth;
+                    if (playerHealth.MaxHealth.ToString() != File.ReadAllText(modFolder + "MaxHealth.txt"))
+                    {
+                        File.WriteAllText(modFolder + "MaxHealth.txt", playerHealth.MaxHealth.ToString());
+                        File.WriteAllText(modFolder + "Health.html", "<center>" + String.Concat(Enumerable.Repeat(healthPip, currentHealth)) + String.Concat(Enumerable.Repeat(healthPipCracked, emptyHealth)) + "</center>" + reloadScript);
+                    }
+                    if (playerHealth.CurrentHealth.ToString() != File.ReadAllText(modFolder + "CurrentHealth.txt"))
+                    {
+                        File.WriteAllText(modFolder + "CurrentHealth.txt", playerHealth.CurrentHealth.ToString());
+                        File.WriteAllText(modFolder + "Health.html", "<center>" + String.Concat(Enumerable.Repeat(healthPip, currentHealth)) + String.Concat(Enumerable.Repeat(healthPipCracked, emptyHealth)) + "</center>" + reloadScript);
+                    }
+                }
+            }
+
+            WriteReward("Left");
+            WriteReward("Center");
+            WriteReward("Right");
         }
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            Blank("Left");
-            Blank("Center");
-            Blank("Right");
+            Blank("DisplayNameLeft.txt");//Remove the reward info when changing room
+            Blank("DisplayNameCenter.txt");
+            Blank("DisplayNameRight.txt");
+            Blank("DisplayDescriptionLeft.txt");
+            Blank("DisplayDescriptionCenter.txt");
+            Blank("DisplayDescriptionRight.txt");
+        }
+        public override void OnApplicationStart()
+        {
+            Directory.CreateDirectory(modFolder);//Create a folder just for me <3
+            CreateIfMissing("MaxHealth.txt");
+            CreateIfMissing("CurrentHealth.txt");
+            CreateIfMissing("DisplayNameLeft.txt");
+            CreateIfMissing("DisplayDescriptionLeft.txt");
+            CreateIfMissing("DisplayNameCenter.txt");
+            CreateIfMissing("DisplayDescriptionCenter.txt");
+            CreateIfMissing("DisplayNameRight.txt");
+            CreateIfMissing("DisplayDescriptionRight.txt");
+            if (File.Exists(modFolder + "Health.html") == false)//If missing put in all these text based files
+            {
+                File.WriteAllText(modFolder + "Health.html", reloadScript);
+            }
+            if (File.Exists(modFolder + "HealthPip.png") == false)
+            {
+                Bitmap img = Properties.Resources.HealthPip;
+                img.Save(modFolder + "HealthPip.png", ImageFormat.Png);
+            }
+            if (File.Exists(modFolder + "HealthPipCracked.png") == false)
+            {
+                Bitmap img = Properties.Resources.HealthPipCracked;
+                img.Save(modFolder + "HealthPipCracked.png", ImageFormat.Png);
+            }
         }
         public override void OnApplicationQuit()
         {
-            Blank("Left");
-            Blank("Center");
-            Blank("Right");
+            Blank("DisplayNameLeft.txt");
+            Blank("DisplayNameCenter.txt");
+            Blank("DisplayNameRight.txt");
+            Blank("DisplayDescriptionLeft.txt");
+            Blank("DisplayDescriptionCenter.txt");
+            Blank("DisplayDescriptionRight.txt");
+            Blank("MaxHealth.txt");
+            Blank("CurrentHealth.txt");
+            File.WriteAllText(modFolder + "Health.html", reloadScript);
         }
     }
 }
