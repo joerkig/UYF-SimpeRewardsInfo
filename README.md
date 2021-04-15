@@ -11,7 +11,8 @@ Here's an example for the settings of the Text source:
 ![ExampleTextSourceSettings](https://i.joerkig.com/cywmp5.png)
 
 To display the Health on your stream add a Browser source in OBS, in the properties of this source put a checkmark infront of Local file and select the Health.html
-The health display is automatically centered, there are also health txt files available to use which have the Current Health and the Max Health in them. You can change the images used for health by removing the ones the come with the mod and renaming the images you want to use to the names of the original ones.
+The health display is automatically centered, there are also health txt files available to use which have the Current Health and the Max Health in them.
+<br/>You can change the images used for health by removing the ones the come with the mod and renaming the images you want to use to the names of the original ones.
 
 Here's an example for the settings of the Browser source:
 ![ExampleBrowserSourceSettings](https://i.joerkig.com/lb31jp.png)
