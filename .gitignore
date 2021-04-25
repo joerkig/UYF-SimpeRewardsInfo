@@ -51,3 +51,10 @@ bin/Release/SimpleRewards.pdb
 *.CopyComplete
 *.pdb
 *.pdb
+.vs/SimpleInfo/v16/.suo
+*.pdb
+*.pdb
+bin/Release/SimpleRewards.pdb
+obj/Release/SimpleRewards.pdb
+*.pdb
+*.sln
