@@ -46,6 +46,10 @@
     <Reference Include="MelonLoader">
       <HintPath>$(GameDirPath)\MelonLoader\MelonLoader.dll</HintPath>
     </Reference>
+    <Reference Include="SG.GlobalEvents, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(GameDirPath)\MelonLoader\Managed\SG.GlobalEvents.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="UnhollowerBaseLib, Version=0.4.10.0, Culture=neutral, processorArchitecture=MSIL">
@@ -76,6 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\HealthPip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DashPipEmpty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DashPip.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

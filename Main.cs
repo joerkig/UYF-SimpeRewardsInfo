@@ -8,13 +8,16 @@ using UnityEngine;
 using MelonLoader;
 using SG.Claymore.Interaction;//Where the Name and Description hide
 using SG.Claymore.Entities;//Health hides here
+using SG.GlobalEvents.Variables;
+using SG.Claymore.Combat.Combatants;
+using SG.Claymore.UI;
 
 namespace SimpleInfo
 {
     public class MyMod : MelonMod
     {
         static string modFolder = MelonUtils.UserDataDirectory + "\\SimpleInfo\\";
-        string reloadScript = "<script>function timedRefresh(timeoutPeriod) {setTimeout(\"location.reload(true); \",timeoutPeriod);} window.onload = timedRefresh(2000);</script>";
+        string reloadScript = "<script>function timedRefresh(timeoutPeriod) {setTimeout(\"location.reload(true); \",timeoutPeriod);} window.onload = timedRefresh(1500);</script>";
         static void Blank(string file)
         {
             if (File.ReadAllText(modFolder + file) != null)//If not empty, empty it
@@ -41,7 +44,9 @@ namespace SimpleInfo
                     if (rewardInteractable.DisplayName.ToString() != File.ReadAllText(modFolder + "DisplayName" + position + ".txt"))
                     {
                         File.WriteAllText(modFolder + "DisplayName" + position + ".txt", rewardInteractable.DisplayName.ToString());
+                        MelonLogger.Msg(rewardInteractable.DisplayName.ToString());
                         File.WriteAllText(modFolder + "DisplayDescription" + position + ".txt", Regex.Replace(rewardInteractable.DisplayDescription.ToString(), pattern, ""));
+                        MelonLogger.Msg(Regex.Replace(rewardInteractable.DisplayDescription.ToString(), pattern, ""));
                     }
                 }
             }
@@ -63,11 +68,13 @@ namespace SimpleInfo
                     {
                         File.WriteAllText(modFolder + "MaxHealth.txt", playerHealth.MaxHealth.ToString());
                         File.WriteAllText(modFolder + "Health.html", "<center>" + String.Concat(Enumerable.Repeat(healthPip, currentHealth)) + String.Concat(Enumerable.Repeat(healthPipCracked, emptyHealth)) + "</center>" + reloadScript);
+                        MelonLogger.Msg(playerHealth.CurrentHealth.ToString() + "/" + playerHealth.MaxHealth.ToString());
                     }
                     if (playerHealth.CurrentHealth.ToString() != File.ReadAllText(modFolder + "CurrentHealth.txt"))
                     {
                         File.WriteAllText(modFolder + "CurrentHealth.txt", playerHealth.CurrentHealth.ToString());
                         File.WriteAllText(modFolder + "Health.html", "<center>" + String.Concat(Enumerable.Repeat(healthPip, currentHealth)) + String.Concat(Enumerable.Repeat(healthPipCracked, emptyHealth)) + "</center>" + reloadScript);
+                        MelonLogger.Msg(playerHealth.CurrentHealth.ToString() + "/" + playerHealth.MaxHealth.ToString());
                     }
                 }
             }
@@ -75,6 +82,30 @@ namespace SimpleInfo
             WriteReward("Left");
             WriteReward("Center");
             WriteReward("Right");
+
+            GameObject dashUI_Instanced = GameObject.Find("DashUI_Instanced");
+            if (dashUI_Instanced != null)
+            {
+                DashUIInstanced dashUIInstanced = dashUI_Instanced.GetComponent<DashUIInstanced>();
+                if (dashUIInstanced != null)
+                {
+                    string dashPip = "<img src=\"DashPip.png\">";
+                    string dashPipEmpty = "<img src=\"DashPipEmpty.png\">";
+                    int emptyDash = dashUIInstanced._cachedMaxValue - dashUIInstanced._cachedCurrentValue;
+                    if (dashUIInstanced._cachedMaxValue.ToString() != File.ReadAllText(modFolder + "MaxDash.txt"))
+                    {
+                        File.WriteAllText(modFolder + "MaxDash.txt", dashUIInstanced._cachedMaxValue.ToString());
+                        File.WriteAllText(modFolder + "Dash.html", "<center>" + String.Concat(Enumerable.Repeat(dashPip, dashUIInstanced._cachedCurrentValue)) + String.Concat(Enumerable.Repeat(dashPipEmpty, emptyDash)) + "</center>" + reloadScript);
+                        MelonLogger.Msg(dashUIInstanced._cachedCurrentValue.ToString() + "/" + dashUIInstanced._cachedMaxValue.ToString());
+                    }
+                    if (dashUIInstanced._cachedCurrentValue.ToString() != File.ReadAllText(modFolder + "CurrentDash.txt"))
+                    {
+                        File.WriteAllText(modFolder + "CurrentDash.txt", dashUIInstanced._cachedCurrentValue.ToString());
+                        File.WriteAllText(modFolder + "Dash.html", "<center>" + String.Concat(Enumerable.Repeat(dashPip, dashUIInstanced._cachedCurrentValue)) + String.Concat(Enumerable.Repeat(dashPipEmpty, emptyDash)) + "</center>" + reloadScript);
+                        MelonLogger.Msg(dashUIInstanced._cachedCurrentValue.ToString() + "/" + dashUIInstanced._cachedMaxValue.ToString());
+                    }
+                }
+            }
         }
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
@@ -96,6 +127,8 @@ namespace SimpleInfo
             CreateIfMissing("DisplayDescriptionCenter.txt");
             CreateIfMissing("DisplayNameRight.txt");
             CreateIfMissing("DisplayDescriptionRight.txt");
+            CreateIfMissing("MaxDash.txt");
+            CreateIfMissing("CurrentDash.txt");
             if (File.Exists(modFolder + "Health.html") == false)//If missing put in all these text based files
             {
                 File.WriteAllText(modFolder + "Health.html", reloadScript);
@@ -109,6 +142,20 @@ namespace SimpleInfo
             {
                 Bitmap img = Properties.Resources.HealthPipCracked;
                 img.Save(modFolder + "HealthPipCracked.png", ImageFormat.Png);
+            }
+            if (File.Exists(modFolder + "Dash.html") == false)//If missing put in all these text based files
+            {
+                File.WriteAllText(modFolder + "Dash.html", reloadScript);
+            }
+            if (File.Exists(modFolder + "DashPip.png") == false)
+            {
+                Bitmap img = Properties.Resources.DashPip;
+                img.Save(modFolder + "DashPip.png", ImageFormat.Png);
+            }
+            if (File.Exists(modFolder + "DashPipEmpty.png") == false)
+            {
+                Bitmap img = Properties.Resources.DashPipEmpty;
+                img.Save(modFolder + "DashPipEmpty.png", ImageFormat.Png);
             }
         }
         public override void OnApplicationQuit()
