@@ -5,7 +5,7 @@ A [MelonLoader](https://melonwiki.xyz/#/?id=requirements) mod for Until You Fall
 The files are located in:
 Until You Fall\UserData\SimpleInfo\
 
-To use the txt files simple add a Text source in OBS and in the properties of that source set it to "Read from file". Click Browse and select the txt file you want to display on your stream
+To use the txt files simply add a Text source in OBS and in the properties of that source set it to "Read from file". Click Browse and select the txt file you want to display on your stream
 
 Here's an example for the settings of the Text source:
 ![ExampleTextSourceSettings](https://i.joerkig.com/cywmp5.png)
