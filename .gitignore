@@ -58,3 +58,5 @@ bin/Release/SimpleRewards.pdb
 obj/Release/SimpleRewards.pdb
 *.pdb
 *.sln
+*.xml
+*.db
