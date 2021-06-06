@@ -17,7 +17,15 @@ namespace SimpleInfo
 {
     public class MyMod : MelonMod
     {
-        static string modFolder = MelonUtils.UserDataDirectory + "\\SimpleInfo\\";
+        float currentHealthPrev;
+        float maxHealthPrev;
+        float currentDashPrev;
+        float maxDashPrev;
+        string comboLimitPrev;
+        string dashDamagePrev;
+        readonly string healthPip = "<img src=\"HealthPip.png\">";
+        readonly string healthPipCracked = "<img src=\"HealthPipCracked.png\">";
+        static readonly string modFolder = MelonUtils.UserDataDirectory + "\\SimpleInfo\\";
         string reloadScript = "<script>function timedRefresh(timeoutPeriod) {setTimeout(\"location.reload(true); \",timeoutPeriod);} window.onload = timedRefresh(1500);</script>";
         static void Blank(string file)
         {
@@ -42,12 +50,12 @@ namespace SimpleInfo
                 RewardInteractable rewardInteractable = gameObject.GetComponentInChildren<RewardInteractable>();
                 if (rewardInteractable != null)
                 {
-                    if (rewardInteractable.DisplayName.ToString() != File.ReadAllText(modFolder + "DisplayName" + position + ".txt"))
+                    if (rewardInteractable.DisplayName != File.ReadAllText(modFolder + "DisplayName" + position + ".txt"))
                     {
-                        File.WriteAllText(modFolder + "DisplayName" + position + ".txt", rewardInteractable.DisplayName.ToString());
-                        MelonLogger.Msg(rewardInteractable.DisplayName.ToString());
-                        File.WriteAllText(modFolder + "DisplayDescription" + position + ".txt", Regex.Replace(rewardInteractable.DisplayDescription.ToString(), pattern, ""));
-                        MelonLogger.Msg(Regex.Replace(rewardInteractable.DisplayDescription.ToString(), pattern, ""));
+                        File.WriteAllText(modFolder + "DisplayName" + position + ".txt", rewardInteractable.DisplayName);
+                        MelonLogger.Msg(rewardInteractable.DisplayName);
+                        File.WriteAllText(modFolder + "DisplayDescription" + position + ".txt", Regex.Replace(rewardInteractable.DisplayDescription, pattern, ""));
+                        MelonLogger.Msg(Regex.Replace(rewardInteractable.DisplayDescription, pattern, ""));
                     }
                 }
             }
@@ -60,22 +68,33 @@ namespace SimpleInfo
                 PlayerHealth playerHealth = playerInteractor.GetComponent<PlayerHealth>();
                 if (playerHealth != null)
                 {
-                    string healthPip = "<img src=\"HealthPip.png\">";
-                    string healthPipCracked = "<img src=\"HealthPipCracked.png\">";
-                    int currentHealth = (int)Math.Ceiling(playerHealth.CurrentHealth);
-                    int maxHealth = (int)Math.Ceiling(playerHealth.MaxHealth);
-                    int emptyHealth = maxHealth - currentHealth;
-                    if (playerHealth.MaxHealth.ToString() != File.ReadAllText(modFolder + "MaxHealth.txt"))
+                    if (playerHealth.CurrentHealth != currentHealthPrev)
                     {
-                        File.WriteAllText(modFolder + "MaxHealth.txt", playerHealth.MaxHealth.ToString());
-                        File.WriteAllText(modFolder + "Health.html", "<center>" + String.Concat(Enumerable.Repeat(healthPip, currentHealth)) + String.Concat(Enumerable.Repeat(healthPipCracked, emptyHealth)) + "</center>" + reloadScript);
-                        MelonLogger.Msg(playerHealth.CurrentHealth.ToString() + "/" + playerHealth.MaxHealth.ToString());
-                    }
-                    if (playerHealth.CurrentHealth.ToString() != File.ReadAllText(modFolder + "CurrentHealth.txt"))
-                    {
+                        int currentHealth = (int)Math.Ceiling(playerHealth.CurrentHealth);
+                        int maxHealth = (int)Math.Ceiling(playerHealth.MaxHealth);
+                        int emptyHealth = maxHealth - currentHealth;
                         File.WriteAllText(modFolder + "CurrentHealth.txt", playerHealth.CurrentHealth.ToString());
-                        File.WriteAllText(modFolder + "Health.html", "<center>" + String.Concat(Enumerable.Repeat(healthPip, currentHealth)) + String.Concat(Enumerable.Repeat(healthPipCracked, emptyHealth)) + "</center>" + reloadScript);
+                        try
+                        {
+                            File.WriteAllText(modFolder + "Health.html", "<center>" + String.Concat(Enumerable.Repeat(healthPip, currentHealth)) + String.Concat(Enumerable.Repeat(healthPipCracked, emptyHealth)) + "</center>" + reloadScript);
+                        }
+                        catch (ArgumentOutOfRangeException) { }
                         MelonLogger.Msg(playerHealth.CurrentHealth.ToString() + "/" + playerHealth.MaxHealth.ToString());
+                        currentHealthPrev = playerHealth.CurrentHealth;
+                    }
+                    if (playerHealth.MaxHealth != maxHealthPrev)
+                    {
+                        int currentHealth = (int)Math.Ceiling(playerHealth.CurrentHealth);
+                        int maxHealth = (int)Math.Ceiling(playerHealth.MaxHealth);
+                        int emptyHealth = maxHealth - currentHealth;
+                        File.WriteAllText(modFolder + "MaxHealth.txt", playerHealth.MaxHealth.ToString());
+                        try
+                        {
+                            File.WriteAllText(modFolder + "Health.html", "<center>" + String.Concat(Enumerable.Repeat(healthPip, currentHealth)) + String.Concat(Enumerable.Repeat(healthPipCracked, emptyHealth)) + "</center>" + reloadScript);
+                        }
+                        catch (ArgumentOutOfRangeException) { }
+                        MelonLogger.Msg(playerHealth.CurrentHealth.ToString() + "/" + playerHealth.MaxHealth.ToString());
+                        maxHealthPrev = playerHealth.MaxHealth;
                     }
                 }
             }
@@ -92,19 +111,29 @@ namespace SimpleInfo
                 {
                     string dashPip = "<img src=\"DashPip.png\">";
                     string dashPipEmpty = "<img src=\"DashPipEmpty.png\">";
-                    if (dashUIInstanced._cachedMaxValue.ToString() != File.ReadAllText(modFolder + "MaxDash.txt"))
-                    {
-                        int emptyDash = dashUIInstanced._cachedMaxValue - dashUIInstanced._cachedCurrentValue;
-                        File.WriteAllText(modFolder + "MaxDash.txt", dashUIInstanced._cachedMaxValue.ToString());
-                        File.WriteAllText(modFolder + "Dash.html", "<center>" + String.Concat(Enumerable.Repeat(dashPip, dashUIInstanced._cachedCurrentValue)) + String.Concat(Enumerable.Repeat(dashPipEmpty, emptyDash)) + "</center>" + reloadScript);
-                        MelonLogger.Msg(dashUIInstanced._cachedCurrentValue.ToString() + "/" + dashUIInstanced._cachedMaxValue.ToString());
-                    }
-                    if (dashUIInstanced._cachedCurrentValue.ToString() != File.ReadAllText(modFolder + "CurrentDash.txt"))
+                    if (dashUIInstanced._cachedCurrentValue != currentDashPrev)
                     {
                         int emptyDash = dashUIInstanced._cachedMaxValue - dashUIInstanced._cachedCurrentValue;
                         File.WriteAllText(modFolder + "CurrentDash.txt", dashUIInstanced._cachedCurrentValue.ToString());
-                        File.WriteAllText(modFolder + "Dash.html", "<center>" + String.Concat(Enumerable.Repeat(dashPip, dashUIInstanced._cachedCurrentValue)) + String.Concat(Enumerable.Repeat(dashPipEmpty, emptyDash)) + "</center>" + reloadScript);
+                        try
+                        {
+                            File.WriteAllText(modFolder + "Dash.html", "<center>" + String.Concat(Enumerable.Repeat(dashPip, dashUIInstanced._cachedCurrentValue)) + String.Concat(Enumerable.Repeat(dashPipEmpty, emptyDash)) + "</center>" + reloadScript);
+                        }
+                        catch (ArgumentOutOfRangeException) { }
                         MelonLogger.Msg(dashUIInstanced._cachedCurrentValue.ToString() + "/" + dashUIInstanced._cachedMaxValue.ToString());
+                        currentDashPrev = dashUIInstanced._cachedCurrentValue;
+                    }
+                    if (dashUIInstanced._cachedMaxValue != maxDashPrev)
+                    {
+                        int emptyDash = dashUIInstanced._cachedMaxValue - dashUIInstanced._cachedCurrentValue;
+                        File.WriteAllText(modFolder + "MaxDash.txt", dashUIInstanced._cachedMaxValue.ToString());
+                        try
+                        {
+                            File.WriteAllText(modFolder + "Dash.html", "<center>" + String.Concat(Enumerable.Repeat(dashPip, dashUIInstanced._cachedCurrentValue)) + String.Concat(Enumerable.Repeat(dashPipEmpty, emptyDash)) + "</center>" + reloadScript);
+                        }
+                        catch (ArgumentOutOfRangeException) { }
+                        MelonLogger.Msg(dashUIInstanced._cachedCurrentValue.ToString() + "/" + dashUIInstanced._cachedMaxValue.ToString());
+                        maxDashPrev = dashUIInstanced._cachedMaxValue;
                     }
                 }
             }
@@ -114,9 +143,10 @@ namespace SimpleInfo
                 TMP_Text combo_Text = comboLimitLabel.GetComponent<TextMeshPro>();
                 if (combo_Text != null)
                 {
-                    if (combo_Text.m_text.ToString() != File.ReadAllText(modFolder + "ComboLimit.txt"))
+                    if (combo_Text.m_text != comboLimitPrev)
                     {
-                        File.WriteAllText(modFolder + "ComboLimit.txt", combo_Text.m_text.ToString());
+                        File.WriteAllText(modFolder + "ComboLimit.txt", combo_Text.m_text);
+                        comboLimitPrev = combo_Text.m_text;
                     }
                 }
             }
@@ -125,9 +155,10 @@ namespace SimpleInfo
             {
                 TMP_Text damage_Text = damageLabel.GetComponent<TextMeshPro>();
                 if (damage_Text != null)
-                    if (damage_Text.m_text.ToString() != File.ReadAllText(modFolder + "DashDamage.txt"))
+                    if (damage_Text.m_text != dashDamagePrev)
                     {
-                        File.WriteAllText(modFolder + "DashDamage.txt", damage_Text.m_text.ToString());
+                        File.WriteAllText(modFolder + "DashDamage.txt", damage_Text.m_text);
+                        dashDamagePrev = damage_Text.m_text;
                     }
             }
         }
@@ -192,7 +223,7 @@ namespace SimpleInfo
             Blank("CurrentHealth.txt");
             Blank("MaxDash.txt");
             Blank("CurrentDash.txt");
-            Blank("DashDamge.txt");
+            Blank("DashDamage.txt");
             Blank("ComboLimit.txt");
             File.WriteAllText(modFolder + "Health.html", reloadScript);
             File.WriteAllText(modFolder + "Dash.html", reloadScript);

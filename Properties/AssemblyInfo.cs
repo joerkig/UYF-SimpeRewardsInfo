@@ -7,7 +7,7 @@ using SimpleInfo;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: MelonInfo(typeof(MyMod), "UYF Simple Info", "1.3.0", "joerkig")]
+[assembly: MelonInfo(typeof(MyMod), "UYF Simple Info", "1.3.1", "joerkig")]
 [assembly: MelonGame("Schell Games", "UntilYouFall")]
 [assembly: AssemblyTitle("SimpleInfo")]
 [assembly: AssemblyDescription("")]
