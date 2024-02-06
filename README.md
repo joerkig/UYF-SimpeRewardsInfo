@@ -16,3 +16,7 @@ file.
 
 Here's an example for the settings of the Browser source:
 ![ExampleBrowserSourceSettings](https://i.joerkig.com/lb31jp.png)
+
+Example OBS layouts"
+![obs64_7LzjT7RX1v](https://github.com/joerkig/UYF-SimpleInfo/assets/44418429/a6297981-7ca7-4148-ae2a-8237acd8de07)
+![obs64_0sZ7575ZBI](https://github.com/joerkig/UYF-SimpleInfo/assets/44418429/3a9aaf9f-3943-411a-a131-5aae261ff9b3)
